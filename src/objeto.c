@@ -11,6 +11,7 @@ struct objeto *objeto_crear_desde_string(const char *string)
 {
 	// char nombre[MAX_NOMBRE];
 	// char descripcion[MAX_TEXTO];
+	if (!string) return NULL;
 	char es_asible[6];
 
 	struct objeto *obj = (struct objeto *) malloc(sizeof( struct objeto ));

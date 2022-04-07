@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+	if (argc != 3) return -1;
 	//Los archivos deben venir como parámetros del main
 	sala_t *sala = sala_crear_desde_archivos(argv[1], argv[2]);
 	// sala_crear_desde_archivos(argv[1], argv[2]);

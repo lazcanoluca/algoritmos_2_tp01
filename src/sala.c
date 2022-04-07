@@ -70,14 +70,9 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 
 char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 {
-	char **nombres_objetos = NULL;
+	char **nombres_objetos = malloc( (unsigned) (*cantidad) * ( sizeof(char *) ) );
 	while( *cantidad < sala->cantidad_objetos )
 	{
-		if (*cantidad == 0)
-			nombres_objetos = malloc(sizeof(char *));
-		else
-			nombres_objetos = realloc(nombres_objetos, (unsigned)(*cantidad+1) * sizeof(char *));
-
 		if (nombres_objetos == NULL)
 		{
 			*cantidad = -1;
