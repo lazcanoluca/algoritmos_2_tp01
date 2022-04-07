@@ -20,7 +20,15 @@ struct objeto *objeto_crear_desde_string(const char *string)
 
 	if( parametros_leidos != 3 ) return NULL;
 
-	obj->es_asible = !strcmp( es_asible, "true" ) ? true : false;
+	// obj->es_asible = !strcmp( es_asible, "true" ) ? true : !strcmp( es_asible, "false") ? false :;
+
+	if( !strcmp( es_asible, "true" )) {
+		obj->es_asible = true;
+	} else if (!strcmp( es_asible, "false" )) {
+		obj->es_asible = false;
+	} else {
+		return NULL;
+	}
 	
 	// printf("\nOBJETO CREADO:\n");
 	// printf("Nombre: %s \n", obj->nombre);

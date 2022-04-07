@@ -37,6 +37,8 @@ struct accion accion_crear_desde_string( const char *string )
 
 struct interaccion *interaccion_crear_desde_string(const char *string)
 {
+	if (!string) return NULL;
+	
 	struct interaccion *inte = malloc(sizeof( struct interaccion ));
 
 	char string_accion[1024];
