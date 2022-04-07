@@ -4,6 +4,7 @@
 #include "interaccion.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_LINEA 1024
 
@@ -21,7 +22,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	int tamanio = 0;
 	struct objeto **bloque_objeto = NULL;
 
-	printf("Objetos...\n");
+	//printf("Objetos...\n");
 
 	// carga el vector objetos
 	while( fgets( linea, MAX_LINEA, archivo_objetos ) != NULL )
@@ -34,7 +35,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		if (bloque_objeto == NULL) return NULL;
 
 		bloque_objeto[tamanio] = objeto_crear_desde_string(linea);
-		printf("%i: %s\n", tamanio, bloque_objeto[tamanio]->nombre);
+		// printf("%i: %s\n", tamanio, bloque_objeto[tamanio]->nombre);
 		tamanio++;
 	}
 	sala->objetos = bloque_objeto;
@@ -43,7 +44,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	tamanio = 0;
 	struct interaccion **bloque_interaccion = NULL;
 
-	printf("Interacciones...\n");
+	// printf("Interacciones...\n");
 
 	while( fgets( linea, MAX_LINEA, archivo_interacciones ) != NULL )
 	{
@@ -52,8 +53,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		else
 			bloque_interaccion = realloc(bloque_interaccion, (unsigned)(tamanio+1) * sizeof(struct interaccion*));
 
-		if (bloque_interaccion == NULL)
-			return NULL;
+		if (bloque_interaccion == NULL) return NULL;
 
 		bloque_interaccion[tamanio] = interaccion_crear_desde_string(linea);
 		//printf("%i: %s\n", tamanio, bloque_interaccion[tamanio]->nombre);
@@ -65,20 +65,56 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	fclose( archivo_objetos );
 	fclose( archivo_interacciones );
 
-	return NULL;
+	return sala;
 }
 
 char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 {
-	return NULL;
+	char **nombres_objetos = NULL;
+	while( *cantidad < sala->cantidad_objetos )
+	{
+		if (*cantidad == 0)
+			nombres_objetos = malloc(sizeof(char *));
+		else
+			nombres_objetos = realloc(nombres_objetos, (unsigned)(*cantidad+1) * sizeof(char *));
+
+		if (nombres_objetos == NULL)
+		{
+			*cantidad = -1;
+			return NULL;
+		}
+
+		nombres_objetos[*cantidad] = sala->objetos[*cantidad]->nombre;
+		(*cantidad)++;
+	}
+
+	return nombres_objetos;
 }
 
 bool sala_es_interaccion_valida(sala_t *sala, const char *verbo, const char *objeto1,
 				const char *objeto2)
 {
+	for ( int i = 0; i < sala->cantidad_interacciones; i++ )
+	{
+		if (
+			!strcmp(sala->interacciones[i]->verbo, verbo) &&
+			!strcmp(sala->interacciones[i]->objeto, objeto1) &&
+			!strcmp(sala->interacciones[i]->objeto_parametro, objeto2)
+		) return true;
+	}
 	return false;
 }
 
 void sala_destruir(sala_t *sala)
 {
+	for (int i = 0; i < sala->cantidad_objetos; i++) {
+		free(sala->objetos[i]);
+	}
+	free(sala->objetos);
+	for (int i = 0; i < sala->cantidad_interacciones; i++) {
+		free(sala->interacciones[i]);
+	}
+	free(sala->interacciones);
+
+	free(sala);
 }
