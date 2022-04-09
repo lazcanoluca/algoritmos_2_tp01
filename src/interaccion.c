@@ -7,11 +7,25 @@
 #define SCOLON ";"
 #define COLON ":"
 
-struct accion accion_crear_desde_string( const char *string )
+struct accion *accion_crear_desde_string( const char *string )
 {
-	struct accion acc;
+	if (string == NULL) return NULL;
+
 	char tipo;
-	sscanf(string, "%c:%[^:]:%[^\n]\n", &tipo, acc.objeto, acc.mensaje);
+
+	struct accion *acc = malloc(sizeof( struct accion ));
+
+	if (acc == NULL) {
+		free(acc);
+		return NULL;
+	}
+
+	int parametros_leidos = sscanf(string, "%c:%[^:]:%[^\n]\n", &tipo, acc.objeto, acc.mensaje);
+
+	if (parametros_leidos != 3){
+		free(acc);
+		return NULL;
+	}
 
 	switch (tipo)
 	{
@@ -37,7 +51,7 @@ struct accion accion_crear_desde_string( const char *string )
 
 struct interaccion *interaccion_crear_desde_string(const char *string)
 {
-	if (!string) return NULL;
+	if (string == NULL) return NULL;
 
 	// if ( NULL == ( p = malloc)) {
 	// 	goto error;
@@ -57,15 +71,20 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 	char string_accion[1024];
 
 	int parametros_leidos = sscanf(string, "%[^;];%[^;];%[^;];%[^\n]\n", inte->objeto, inte->verbo, inte->objeto_parametro, string_accion);
-
-	if( !strcmp(inte->objeto_parametro, "_") ) strcpy(inte->objeto_parametro, "");
 		
 	if( parametros_leidos != 4 ){
 		free(inte);
 		return NULL;
 	}
 
+	if( !strcmp(inte->objeto_parametro, "_") ) strcpy(inte->objeto_parametro, "");
+
 	inte->accion = accion_crear_desde_string(string_accion);
+
+	if (inte->accion == NULL) {
+		free(inte);
+		return NULL;
+	}
 	
 	// printf("\nINTERACCION CREADA:\n");
 	// printf("Objeto: %s \n", inte->objeto);
