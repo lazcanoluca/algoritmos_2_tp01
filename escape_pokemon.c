@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 	//Mostrar todos los objetos en la sala
 	int cant_objetos = 0;
 
+	//printf("\n\n%i\n\n", sala->cantidad_objetos);
+
 
 	char **nombres = sala_obtener_nombre_objetos(sala, &cant_objetos);
 

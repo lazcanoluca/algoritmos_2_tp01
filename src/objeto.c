@@ -18,7 +18,10 @@ struct objeto *objeto_crear_desde_string(const char *string)
 
 	int parametros_leidos = sscanf(string, "%[^;];%[^;];%[^\n]\n", obj->nombre, obj->descripcion, es_asible);
 
-	if( parametros_leidos != 3 ) return NULL;
+	if( parametros_leidos != 3 ){
+		free(obj);
+		return NULL;
+	}
 
 	// obj->es_asible = !strcmp( es_asible, "true" ) ? true : !strcmp( es_asible, "false") ? false :;
 

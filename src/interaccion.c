@@ -38,22 +38,40 @@ struct accion accion_crear_desde_string( const char *string )
 struct interaccion *interaccion_crear_desde_string(const char *string)
 {
 	if (!string) return NULL;
-	
+
+	// if ( NULL == ( p = malloc)) {
+	// 	goto error;
+	// }
+
+	// error:
+	// 	free();
+	// 	return NULL;
+
 	struct interaccion *inte = malloc(sizeof( struct interaccion ));
+
+	if (inte == NULL) {
+		free(inte);
+		return NULL;
+	}
 
 	char string_accion[1024];
 
 	int parametros_leidos = sscanf(string, "%[^;];%[^;];%[^;];%[^\n]\n", inte->objeto, inte->verbo, inte->objeto_parametro, string_accion);
-	
-	if( parametros_leidos != 4 ) return NULL;
+
+	if( !strcmp(inte->objeto_parametro, "_") ) strcpy(inte->objeto_parametro, "");
+		
+	if( parametros_leidos != 4 ){
+		free(inte);
+		return NULL;
+	}
 
 	inte->accion = accion_crear_desde_string(string_accion);
 	
-	printf("\nINTERACCION CREADA:\n");
-	printf("Objeto: %s \n", inte->objeto);
-	printf("Verbo: %s \n", inte->verbo);
-	printf("Objeto parametro: %s \n", inte->objeto_parametro);
-	printf("Accion: %s %i -> %s\n", inte->accion.objeto, inte->accion.tipo, inte->accion.mensaje);
+	// printf("\nINTERACCION CREADA:\n");
+	// printf("Objeto: %s \n", inte->objeto);
+	// printf("Verbo: %s \n", inte->verbo);
+	// printf("Objeto parametro: %s \n", inte->objeto_parametro);
+	// printf("Accion: %s %i -> %s\n", inte->accion.objeto, inte->accion.tipo, inte->accion.mensaje);
 
 	return inte;
 }

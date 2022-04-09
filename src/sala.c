@@ -17,7 +17,11 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	archivo_interacciones = fopen( interacciones, "r");
 
 	sala_t *sala = malloc(sizeof(sala_t));
-	if (sala == NULL) return NULL;
+
+	if (sala == NULL){
+		free(sala);
+		return NULL;
+	}
 
 	int tamanio = 0;
 	struct objeto **bloque_objeto = NULL;
@@ -32,7 +36,10 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		else
 			bloque_objeto = realloc(bloque_objeto, (unsigned)(tamanio+1) * sizeof(struct objeto*));
 
-		if (bloque_objeto == NULL) return NULL;
+		if (bloque_objeto == NULL){
+			free(bloque_objeto);
+			return NULL;
+		}
 
 		bloque_objeto[tamanio] = objeto_crear_desde_string(linea);
 		// printf("%i: %s\n", tamanio, bloque_objeto[tamanio]->nombre);
@@ -53,7 +60,10 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		else
 			bloque_interaccion = realloc(bloque_interaccion, (unsigned)(tamanio+1) * sizeof(struct interaccion*));
 
-		if (bloque_interaccion == NULL) return NULL;
+		if (bloque_interaccion == NULL){
+			free(bloque_interaccion);
+			return NULL;
+		}
 
 		bloque_interaccion[tamanio] = interaccion_crear_desde_string(linea);
 		//printf("%i: %s\n", tamanio, bloque_interaccion[tamanio]->nombre);
@@ -70,17 +80,30 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 
 char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 {
-	char **nombres_objetos = malloc( (unsigned) (*cantidad) * ( sizeof(char *) ) );
-	while( *cantidad < sala->cantidad_objetos )
-	{
-		if (nombres_objetos == NULL)
-		{
-			*cantidad = -1;
-			return NULL;
-		}
+	if (sala == NULL){
+		*cantidad = -1;
+		return NULL;
+	}
 
-		nombres_objetos[*cantidad] = sala->objetos[*cantidad]->nombre;
-		(*cantidad)++;
+	*cantidad = sala->cantidad_objetos;
+	printf("\n\n\nObjetos: %i\n\n\n", *cantidad);
+	char **nombres_objetos = malloc( (unsigned) (*cantidad) * ( sizeof(char *) ) );
+
+	if (nombres_objetos == NULL){
+		free(nombres_objetos);
+		*cantidad = -1;
+		return NULL;
+	}
+
+	for( int i = 0; i < *cantidad; i++ )
+	{
+		// if (nombres_objetos == NULL)
+		// {
+		// 	*cantidad = -1;
+		// 	return NULL;
+		// }
+
+		nombres_objetos[i] = sala->objetos[i]->nombre;
 	}
 
 	return nombres_objetos;
