@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 	//printf("\n\n\n%s\n", *(sala));
 
 	if (sala == NULL) {
+		free(sala);
 		printf("Error al crear la sala de escape\n");
 		return -1;
 	}
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
 	printf("Usar llave en el cajon: %s\n", sala_es_interaccion_valida(sala, "usar", "llave", "cajon") ? "Válida" : "Inválida");
 	printf("Quemar la mesa: %s\n", sala_es_interaccion_valida(sala, "quemar", "mesa", "_") ? "Válida" : "Inválida");
 	
-
+	// free(cant_objetos);
 	sala_destruir(sala);
 
 	return 0;

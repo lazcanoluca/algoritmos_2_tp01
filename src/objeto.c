@@ -14,7 +14,12 @@ struct objeto *objeto_crear_desde_string(const char *string)
 	if (!string) return NULL;
 	char es_asible[6];
 
-	struct objeto *obj = (struct objeto *) malloc(sizeof( struct objeto ));
+	struct objeto *obj = malloc(sizeof( struct objeto ));
+
+	if (obj == NULL){
+		free(obj);
+		return NULL;
+	}
 
 	int parametros_leidos = sscanf(string, "%[^;];%[^;];%[^\n]\n", obj->nombre, obj->descripcion, es_asible);
 
@@ -30,6 +35,7 @@ struct objeto *objeto_crear_desde_string(const char *string)
 	} else if (!strcmp( es_asible, "false" )) {
 		obj->es_asible = false;
 	} else {
+		free(obj);
 		return NULL;
 	}
 	

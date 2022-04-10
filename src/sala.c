@@ -39,6 +39,8 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 			bloque_objeto = realloc(bloque_objeto, (unsigned)(tamanio+1) * sizeof(struct objeto*));
 
 		if (bloque_objeto == NULL){
+			free(archivo_objetos);
+			free(sala);
 			free(bloque_objeto);
 			return NULL;
 		}
@@ -49,6 +51,8 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	}
 	sala->objetos = bloque_objeto;
 	sala->cantidad_objetos = tamanio;
+
+	// free(bloque_objeto);
 
 	tamanio = 0;
 	struct interaccion **bloque_interaccion = NULL;
@@ -63,7 +67,14 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 			bloque_interaccion = realloc(bloque_interaccion, (unsigned)(tamanio+1) * sizeof(struct interaccion*));
 
 		if (bloque_interaccion == NULL){
+			fclose(archivo_interacciones);
+			for (int i = 0; i < sala->cantidad_objetos; i++) {
+				free(sala->objetos[i]);
+			}
+			free(sala->objetos);
+			free(sala);
 			free(bloque_interaccion);
+			free(bloque_objeto);
 			return NULL;
 		}
 
@@ -74,11 +85,21 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	sala->interacciones = bloque_interaccion;
 	sala->cantidad_interacciones = tamanio;
 
+	// free(bloque_interaccion);
 
 	fclose( archivo_objetos );
 	fclose( archivo_interacciones );
 
-	if (tamanio == 0) return NULL;
+	if (tamanio == 0){
+		for (int i = 0; i < sala->cantidad_objetos; i++) {
+			free(sala->objetos[i]);
+		}
+		free(sala->objetos);
+		free(sala);
+		free(bloque_interaccion);
+		// free(bloque_objeto);
+		return NULL;
+	}
 
 	return sala;
 }
@@ -91,7 +112,9 @@ char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 	}
 
 	if (cantidad == NULL) {
-		cantidad = malloc(sizeof(int));
+		int i = 0;
+		cantidad = &i;
+		// cantidad = malloc(sizeof(int));
 	}
 
 	*cantidad = sala->cantidad_objetos;
