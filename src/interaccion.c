@@ -7,42 +7,44 @@
 #define SCOLON ";"
 #define COLON ":"
 
-struct accion *accion_crear_desde_string( const char *string )
+struct accion *accion_crear_desde_string( struct accion *acc, const char *string )
 {
 	if (string == NULL) return NULL;
 
 	char tipo;
 
-	struct accion *acc = malloc(sizeof( struct accion ));
+	// struct accion *acc = malloc(sizeof( struct accion ));
 
-	if (acc == NULL) {
-		free(acc);
-		return NULL;
-	}
+	// if (acc == NULL) {
+	// 	free(acc);
+	// 	return NULL;
+	// }
 
-	int parametros_leidos = sscanf(string, "%c:%[^:]:%[^\n]\n", &tipo, acc.objeto, acc.mensaje);
+	int parametros_leidos = sscanf(string, "%c:%[^:]:%[^\n]\n", &tipo, acc->objeto, acc->mensaje);
 
 	if (parametros_leidos != 3){
-		free(acc);
+		// free(acc);
 		return NULL;
 	}
+
+	if( !strcmp(acc->objeto, "_") ) strcpy(acc->objeto, "");
 
 	switch (tipo)
 	{
 		case 'd':
-			acc.tipo = DESCUBRIR_OBJETO;
+			acc->tipo = DESCUBRIR_OBJETO;
 			break;
 		case 'r':
-			acc.tipo = REEMPLAZAR_OBJETO;
+			acc->tipo = REEMPLAZAR_OBJETO;
 			break;
 		case 'e':
-			acc.tipo = ELIMINAR_OBJETO;
+			acc->tipo = ELIMINAR_OBJETO;
 			break;
 		case 'm':
-			acc.tipo = MOSTRAR_MENSAJE;
+			acc->tipo = MOSTRAR_MENSAJE;
 			break;
 		default:
-			acc.tipo = ACCION_INVALIDA;
+			acc->tipo = ACCION_INVALIDA;
 			break;
 	};
 
@@ -79,12 +81,23 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 
 	if( !strcmp(inte->objeto_parametro, "_") ) strcpy(inte->objeto_parametro, "");
 
-	inte->accion = accion_crear_desde_string(string_accion);
+	struct accion *acc = malloc(sizeof( struct accion ));
 
-	if (inte->accion == NULL) {
+	if (acc == NULL) {
+		free(acc);
 		free(inte);
 		return NULL;
 	}
+
+	if ( accion_crear_desde_string(acc, string_accion) == NULL ){
+		free(acc);
+		free(inte);
+		return NULL;
+	}
+
+	inte->accion = *accion_crear_desde_string(acc, string_accion);
+
+	free(acc);
 	
 	// printf("\nINTERACCION CREADA:\n");
 	// printf("Objeto: %s \n", inte->objeto);
