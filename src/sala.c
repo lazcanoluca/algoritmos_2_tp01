@@ -14,7 +14,9 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	char linea[MAX_LINEA];
 
 	archivo_objetos = fopen( objetos, "r" );
+	if (archivo_objetos == NULL) return NULL;
 	archivo_interacciones = fopen( interacciones, "r");
+	if (archivo_interacciones == NULL) return NULL;
 
 	sala_t *sala = malloc(sizeof(sala_t));
 
@@ -72,8 +74,11 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	sala->interacciones = bloque_interaccion;
 	sala->cantidad_interacciones = tamanio;
 
+
 	fclose( archivo_objetos );
 	fclose( archivo_interacciones );
+
+	if (tamanio == 0) return NULL;
 
 	return sala;
 }
@@ -85,8 +90,12 @@ char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 		return NULL;
 	}
 
+	if (cantidad == NULL) {
+		cantidad = malloc(sizeof(int));
+	}
+
 	*cantidad = sala->cantidad_objetos;
-	printf("\n\n\nObjetos: %i\n\n\n", *cantidad);
+	// printf("\n\n\nObjetos: %i\n\n\n", *cantidad);
 	char **nombres_objetos = malloc( (unsigned) (*cantidad) * ( sizeof(char *) ) );
 
 	if (nombres_objetos == NULL){
@@ -112,6 +121,9 @@ char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 bool sala_es_interaccion_valida(sala_t *sala, const char *verbo, const char *objeto1,
 				const char *objeto2)
 {
+
+	if (sala == NULL || verbo == NULL || objeto1 == NULL || objeto2 == NULL) return NULL;
+
 	for ( int i = 0; i < sala->cantidad_interacciones; i++ )
 	{
 		if (
