@@ -5,10 +5,8 @@
 int main(int argc, char *argv[])
 {
 	if (argc != 3) return -1;
-	//Los archivos deben venir como parámetros del main
+
 	sala_t *sala = sala_crear_desde_archivos(argv[1], argv[2]);
-	// sala_crear_desde_archivos(argv[1], argv[2]);
-	//printf("\n\n\n%s\n", *(sala));
 
 	if (sala == NULL) {
 		free(sala);
@@ -16,18 +14,14 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//Mostrar todos los objetos en la sala
 	int cant_objetos = 0;
-
-	//printf("\n\n%i\n\n", sala->cantidad_objetos);
-
 
 	char **nombres = sala_obtener_nombre_objetos(sala, &cant_objetos);
 
+	//Mostrar todos los objetos en la sala
 	printf("Objetos...\n");
 	
-	for (int i = 0; i < cant_objetos; i++)
-	{
+	for (int i = 0; i < cant_objetos; i++) {
 		printf("%i: %s\n", i, nombres[i]);
 	}
 
@@ -46,7 +40,6 @@ int main(int argc, char *argv[])
 	printf("Usar llave en el cajon: %s\n", sala_es_interaccion_valida(sala, "usar", "llave", "cajon") ? "Válida" : "Inválida");
 	printf("Quemar la mesa: %s\n", sala_es_interaccion_valida(sala, "quemar", "mesa", "_") ? "Válida" : "Inválida");
 	
-	// free(cant_objetos);
 	sala_destruir(sala);
 
 	return 0;

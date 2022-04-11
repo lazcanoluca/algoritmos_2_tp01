@@ -4,33 +4,19 @@
 #include <string.h>
 #include <stdio.h>
 
-#define SCOLON ";"
-#define COLON ":"
-
 struct accion *accion_crear_desde_string( struct accion *acc, const char *string )
 {
 	if (string == NULL) return NULL;
 
 	char tipo;
 
-	// struct accion *acc = malloc(sizeof( struct accion ));
-
-	// if (acc == NULL) {
-	// 	free(acc);
-	// 	return NULL;
-	// }
-
 	int parametros_leidos = sscanf(string, "%c:%[^:]:%[^\n]\n", &tipo, acc->objeto, acc->mensaje);
 
-	if (parametros_leidos != 3){
-		// free(acc);
-		return NULL;
-	}
+	if (parametros_leidos != 3) return NULL;
 
-	if( !strcmp(acc->objeto, "_") ) strcpy(acc->objeto, "");
+	if (!strcmp(acc->objeto, "_")) strcpy(acc->objeto, "");
 
-	switch (tipo)
-	{
+	switch (tipo) {
 		case 'd':
 			acc->tipo = DESCUBRIR_OBJETO;
 			break;
@@ -55,14 +41,6 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 {
 	if (string == NULL) return NULL;
 
-	// if ( NULL == ( p = malloc)) {
-	// 	goto error;
-	// }
-
-	// error:
-	// 	free();
-	// 	return NULL;
-
 	struct interaccion *inte = malloc(sizeof( struct interaccion ));
 
 	if (inte == NULL) {
@@ -74,12 +52,12 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 
 	int parametros_leidos = sscanf(string, "%[^;];%[^;];%[^;];%[^\n]\n", inte->objeto, inte->verbo, inte->objeto_parametro, string_accion);
 		
-	if( parametros_leidos != 4 ){
+	if (parametros_leidos != 4) {
 		free(inte);
 		return NULL;
 	}
 
-	if( !strcmp(inte->objeto_parametro, "_") ) strcpy(inte->objeto_parametro, "");
+	if (!strcmp(inte->objeto_parametro, "_")) strcpy(inte->objeto_parametro, "");
 
 	struct accion *acc = malloc(sizeof( struct accion ));
 
@@ -89,7 +67,7 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 		return NULL;
 	}
 
-	if ( accion_crear_desde_string(acc, string_accion) == NULL ){
+	if (accion_crear_desde_string(acc, string_accion) == NULL) {
 		free(acc);
 		free(inte);
 		return NULL;
@@ -99,11 +77,5 @@ struct interaccion *interaccion_crear_desde_string(const char *string)
 
 	free(acc);
 	
-	// printf("\nINTERACCION CREADA:\n");
-	// printf("Objeto: %s \n", inte->objeto);
-	// printf("Verbo: %s \n", inte->verbo);
-	// printf("Objeto parametro: %s \n", inte->objeto_parametro);
-	// printf("Accion: %s %i -> %s\n", inte->accion.objeto, inte->accion.tipo, inte->accion.mensaje);
-
 	return inte;
 }

@@ -10,17 +10,17 @@
 
 sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones)
 {
-	FILE *archivo_objetos, *archivo_interacciones;
-	char linea[MAX_LINEA];
-
-	archivo_objetos = fopen( objetos, "r" );
+	FILE *archivo_objetos = fopen( objetos, "r" );
 	if (archivo_objetos == NULL) return NULL;
-	archivo_interacciones = fopen( interacciones, "r");
+
+	FILE *archivo_interacciones = fopen( interacciones, "r" );
 	if (archivo_interacciones == NULL) return NULL;
+
+	char linea[MAX_LINEA];
 
 	sala_t *sala = malloc(sizeof(sala_t));
 
-	if (sala == NULL){
+	if (sala == NULL) {
 		free(sala);
 		return NULL;
 	}
@@ -28,17 +28,14 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	int tamanio = 0;
 	struct objeto **bloque_objeto = NULL;
 
-	//printf("Objetos...\n");
-
 	// carga el vector objetos
-	while( fgets( linea, MAX_LINEA, archivo_objetos ) != NULL )
-	{
+	while ( fgets( linea, MAX_LINEA, archivo_objetos ) != NULL ) {
 		if (tamanio == 0)
 			bloque_objeto = malloc(sizeof(struct objeto *));
 		else
 			bloque_objeto = realloc(bloque_objeto, (unsigned)(tamanio+1) * sizeof(struct objeto*));
 
-		if (bloque_objeto == NULL){
+		if (bloque_objeto == NULL) {
 			free(archivo_objetos);
 			free(sala);
 			free(bloque_objeto);
@@ -46,27 +43,21 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		}
 
 		bloque_objeto[tamanio] = objeto_crear_desde_string(linea);
-		// printf("%i: %s\n", tamanio, bloque_objeto[tamanio]->nombre);
 		tamanio++;
 	}
 	sala->objetos = bloque_objeto;
 	sala->cantidad_objetos = tamanio;
 
-	// free(bloque_objeto);
-
 	tamanio = 0;
 	struct interaccion **bloque_interaccion = NULL;
 
-	// printf("Interacciones...\n");
-
-	while( fgets( linea, MAX_LINEA, archivo_interacciones ) != NULL )
-	{
+	while( fgets( linea, MAX_LINEA, archivo_interacciones ) != NULL ) {
 		if (tamanio == 0)
 			bloque_interaccion = malloc(sizeof(struct interaccion *));
 		else
 			bloque_interaccion = realloc(bloque_interaccion, (unsigned)(tamanio+1) * sizeof(struct interaccion*));
 
-		if (bloque_interaccion == NULL){
+		if (bloque_interaccion == NULL) {
 			fclose(archivo_interacciones);
 			for (int i = 0; i < sala->cantidad_objetos; i++) {
 				free(sala->objetos[i]);
@@ -79,25 +70,22 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 		}
 
 		bloque_interaccion[tamanio] = interaccion_crear_desde_string(linea);
-		//printf("%i: %s\n", tamanio, bloque_interaccion[tamanio]->nombre);
 		tamanio++;
 	}
 	sala->interacciones = bloque_interaccion;
 	sala->cantidad_interacciones = tamanio;
 
-	// free(bloque_interaccion);
 
 	fclose( archivo_objetos );
 	fclose( archivo_interacciones );
 
-	if (tamanio == 0){
+	if (tamanio == 0) {
 		for (int i = 0; i < sala->cantidad_objetos; i++) {
 			free(sala->objetos[i]);
 		}
 		free(sala->objetos);
 		free(sala);
 		free(bloque_interaccion);
-		// free(bloque_objeto);
 		return NULL;
 	}
 
@@ -106,7 +94,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 
 char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 {
-	if (sala == NULL){
+	if (sala == NULL) {
 		*cantidad = -1;
 		return NULL;
 	}
@@ -114,27 +102,18 @@ char **sala_obtener_nombre_objetos(sala_t *sala, int *cantidad)
 	if (cantidad == NULL) {
 		int i = 0;
 		cantidad = &i;
-		// cantidad = malloc(sizeof(int));
 	}
 
 	*cantidad = sala->cantidad_objetos;
-	// printf("\n\n\nObjetos: %i\n\n\n", *cantidad);
 	char **nombres_objetos = malloc( (unsigned) (*cantidad) * ( sizeof(char *) ) );
 
-	if (nombres_objetos == NULL){
+	if (nombres_objetos == NULL) {
 		free(nombres_objetos);
 		*cantidad = -1;
 		return NULL;
 	}
 
-	for( int i = 0; i < *cantidad; i++ )
-	{
-		// if (nombres_objetos == NULL)
-		// {
-		// 	*cantidad = -1;
-		// 	return NULL;
-		// }
-
+	for( int i = 0; i < *cantidad; i++ ) {
 		nombres_objetos[i] = sala->objetos[i]->nombre;
 	}
 
@@ -147,8 +126,7 @@ bool sala_es_interaccion_valida(sala_t *sala, const char *verbo, const char *obj
 
 	if (sala == NULL || verbo == NULL || objeto1 == NULL || objeto2 == NULL) return NULL;
 
-	for ( int i = 0; i < sala->cantidad_interacciones; i++ )
-	{
+	for ( int i = 0; i < sala->cantidad_interacciones; i++ ) {
 		if (
 			!strcmp(sala->interacciones[i]->verbo, verbo) &&
 			!strcmp(sala->interacciones[i]->objeto, objeto1) &&
